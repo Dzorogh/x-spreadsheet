@@ -188,7 +188,11 @@ const evalSuffixExpr = (srcStack, formulaMap, cellRender, cellList) => {
       for (let j = 0; j < len; j += 1) {
         params.push(stack.pop());
       }
-      stack.push(formulaMap[formula].render(params.reverse()));
+      if (formulaMap[formula]) {
+        stack.push(formulaMap[formula].render(params.reverse()));
+      } else {
+        stack.push('')
+      }
     } else {
       if (cellList.includes(expr)) {
         return 0;
@@ -206,14 +210,19 @@ const evalSuffixExpr = (srcStack, formulaMap, cellRender, cellList) => {
 
 const cellRender = (src, formulaMap, getCellText, cellList = []) => {
   if (src[0] === '=') {
-    const stack = infixExprToSuffixExpr(src.substring(1));
-    if (stack.length <= 0) return src;
-    return evalSuffixExpr(
-      stack,
-      formulaMap,
-      (x, y) => cellRender(getCellText(x, y), formulaMap, getCellText, cellList),
-      cellList,
-    );
+    const stackInfix = infixExprToSuffixExpr(src.substring(1));
+    if (stackInfix.length) {
+      const stackSuffix = evalSuffixExpr(
+          stackInfix,
+          formulaMap,
+          (x, y) => cellRender(getCellText(x, y), formulaMap, getCellText, cellList),
+          cellList,
+      );
+      
+      if (stackSuffix !== undefined) {
+        return stackSuffix;
+      }
+    }
   }
   return src;
 };
