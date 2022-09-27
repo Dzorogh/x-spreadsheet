@@ -117,7 +117,7 @@ declare module '@dzorogh/x-data-spreadsheet' {
   }
 
   export interface CellStyle {
-    align?: 'left' | 'center' | 'right';
+    align?: 'left' | 'center'   | 'right';
     valign?: 'top' | 'middle' | 'bottom';
     font?: {
       bold?: boolean;
